@@ -3,9 +3,11 @@
 > **Instantly calculate download times. Compare connections. Share results.**  
 > No installs. No sign-up. Just open and use.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge)](https://WARRIORXR.github.io/download-speed-calculator)
-[![Branch](https://img.shields.io/badge/Branch-feature%2Fenhanced--calculator-blue?style=for-the-badge)](https://github.com/WARRIORXR/download-speed-calculator/tree/feature/enhanced-calculator)
+[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Visit%20Site-brightgreen?style=for-the-badge)](https://warriorxr.github.io/download-speed-calculator/)
+[![GitHub](https://img.shields.io/badge/GitHub-main-181717?style=for-the-badge&logo=github)](https://github.com/WARRIORXR/download-speed-calculator)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+
+### 🔗 https://warriorxr.github.io/download-speed-calculator/
 
 ---
 
@@ -47,26 +49,12 @@ All units handled automatically — MB, GB, TB, Kbps, Mbps, Gbps, and more.
 
 ---
 
-## Deploy in 60 Seconds
-
-```bash
-# GitHub Pages
-Settings → Pages → Branch: main → Save
-# Live at: https://WARRIORXR.github.io/download-speed-calculator
-
-# Vercel
-Import repo → Leave build empty → Deploy
-```
-
----
-
 ## Files
 
 ```
 index.html   → App structure (3 tabs, result panel, comparison table)
 style.css    → Dark glassmorphism theme + animations
 app.js       → All logic: calculator, history, sharing, gauge, batch
-vercel.json  → Static site config for Vercel
 ```
 
 ---
