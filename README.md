@@ -3,11 +3,15 @@
 > **Instantly calculate download times. Compare connections. Share results.**  
 > No installs. No sign-up. Just open and use.
 
-[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Visit%20Site-brightgreen?style=for-the-badge)](https://warriorxr.github.io/download-speed-calculator/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen?style=for-the-badge&logo=github)](https://warriorxr.github.io/download-speed-calculator/)
+[![Vercel](https://img.shields.io/badge/Vercel-Live-000000?style=for-the-badge&logo=vercel)](https://speedcalculator-omega.vercel.app/)
 [![GitHub](https://img.shields.io/badge/GitHub-main-181717?style=for-the-badge&logo=github)](https://github.com/WARRIORXR/download-speed-calculator)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-### 🔗 https://warriorxr.github.io/download-speed-calculator/
+| Platform | URL |
+|----------|-----|
+| 🌐 GitHub Pages | https://warriorxr.github.io/download-speed-calculator/ |
+| ▲ Vercel | https://speedcalculator-omega.vercel.app/ |
 
 ---
 
