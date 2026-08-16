@@ -3,101 +3,304 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Download Speed Calculator</title>
-  <meta name="description" content="Calculate how long it takes to download any file. Simple, fast, and accurate." />
+  <title>Download Speed Calculator — Instant File Download Time</title>
+  <meta name="description" content="Calculate exactly how long any file will take to download. Compare across connections, reverse-calculate needed speed, track history, and share results instantly." />
+  <meta property="og:title" content="Download Speed Calculator" />
+  <meta property="og:description" content="Instantly calculate download times, compare connections, and share results." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- Animated background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
   <main>
 
-    <header>
-      <h1>Download Calculator</h1>
-      <p>How long will your download take?</p>
+    <!-- ── Header ── -->
+    <header class="site-header">
+      <div class="header-badge">⚡ Pro Calculator</div>
+      <h1>Download Speed <span class="accent-text">Calculator</span></h1>
+      <p>Calculate download times, compare connections &amp; share results instantly.</p>
     </header>
 
-    <section class="card" aria-label="Download Time Calculator">
+    <!-- ── Mode Tabs ── -->
+    <div class="tabs" role="tablist" aria-label="Calculator mode">
+      <button class="tab active" id="tab-time" role="tab" aria-selected="true" aria-controls="panel-time" onclick="switchTab('time')">
+        ⏱ Calculate Time
+      </button>
+      <button class="tab" id="tab-speed" role="tab" aria-selected="false" aria-controls="panel-speed" onclick="switchTab('speed')">
+        🚀 Find Speed Needed
+      </button>
+      <button class="tab" id="tab-batch" role="tab" aria-selected="false" aria-controls="panel-batch" onclick="switchTab('batch')">
+        📦 Batch Files
+      </button>
+    </div>
 
-      <div class="field-row">
-        <div class="field">
-          <label for="file-size-value">File Size</label>
-          <div class="input-wrap">
-            <input type="number" id="file-size-value" placeholder="e.g. 10" min="0" step="any" autocomplete="off" />
-            <select id="file-size-unit" aria-label="File size unit">
-              <option value="B">B</option>
-              <option value="KB">KB</option>
-              <option value="MB">MB</option>
-              <option value="GB" selected>GB</option>
-              <option value="TB">TB</option>
-              <option value="bit">bit</option>
-              <option value="Kbit">Kbit</option>
-              <option value="Mbit">Mbit</option>
-              <option value="Gbit">Gbit</option>
-              <option value="KiB">KiB</option>
-              <option value="MiB">MiB</option>
-              <option value="GiB">GiB</option>
-            </select>
+    <!-- ══════════════════════════════════════
+         PANEL 1 — Calculate Download Time
+    ══════════════════════════════════════ -->
+    <section id="panel-time" class="tab-panel active" role="tabpanel" aria-labelledby="tab-time">
+
+      <div class="card">
+        <div class="field-row">
+          <!-- File Size -->
+          <div class="field" id="field-size">
+            <label for="file-size-value">📁 File Size</label>
+            <div class="input-wrap">
+              <input type="number" id="file-size-value" placeholder="e.g. 10" min="0" step="any" autocomplete="off" />
+              <select id="file-size-unit" aria-label="File size unit">
+                <option value="B">B</option>
+                <option value="KB">KB</option>
+                <option value="MB">MB</option>
+                <option value="GB" selected>GB</option>
+                <option value="TB">TB</option>
+                <option value="bit">bit</option>
+                <option value="Kbit">Kbit</option>
+                <option value="Mbit">Mbit</option>
+                <option value="Gbit">Gbit</option>
+                <option value="KiB">KiB</option>
+                <option value="MiB">MiB</option>
+                <option value="GiB">GiB</option>
+              </select>
+            </div>
+            <span class="hint" id="size-hint"></span>
           </div>
-          <span class="hint" id="size-hint"></span>
+
+          <!-- Download Speed -->
+          <div class="field" id="field-speed">
+            <label for="speed-value">📶 Download Speed</label>
+            <div class="input-wrap">
+              <input type="number" id="speed-value" placeholder="e.g. 100" min="0" step="any" autocomplete="off" />
+              <select id="speed-unit" aria-label="Speed unit">
+                <option value="bps">bps</option>
+                <option value="Kbps">Kbps</option>
+                <option value="Mbps" selected>Mbps</option>
+                <option value="Gbps">Gbps</option>
+                <option value="Bps">B/s</option>
+                <option value="KBps">KB/s</option>
+                <option value="MBps">MB/s</option>
+                <option value="GBps">GB/s</option>
+              </select>
+            </div>
+            <span class="hint" id="speed-hint"></span>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="speed-value">Download Speed</label>
+        <button id="calc-btn" onclick="calculate()">Calculate Download Time</button>
+      </div>
+
+      <!-- Result Panel -->
+      <section class="result-panel" id="result-panel" aria-live="polite">
+
+        <!-- Gauge -->
+        <div class="gauge-wrap" id="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 200 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#e05c5c"/>
+                <stop offset="40%" style="stop-color:#f7a440"/>
+                <stop offset="70%" style="stop-color:#d4f70e"/>
+                <stop offset="100%" style="stop-color:#4ade80"/>
+              </linearGradient>
+            </defs>
+            <!-- Track arc -->
+            <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="12" stroke-linecap="round"/>
+            <!-- Fill arc -->
+            <path class="gauge-fill" id="gauge-fill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gauge-grad)" stroke-width="12" stroke-linecap="round"/>
+            <!-- Needle -->
+            <line class="gauge-needle" id="gauge-needle" x1="100" y1="100" x2="100" y2="30" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="6" class="gauge-center"/>
+          </svg>
+          <div class="gauge-label" id="gauge-label">—</div>
+        </div>
+
+        <!-- Main Result -->
+        <div class="result-main">
+          <div class="result-time" id="result-time">—</div>
+          <div class="result-sub" id="result-sub"></div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="breakdown" id="breakdown">
+          <div class="bd-item">
+            <span class="bd-val" id="bd-sec">—</span>
+            <span class="bd-label">seconds</span>
+          </div>
+          <div class="bd-item">
+            <span class="bd-val" id="bd-min">—</span>
+            <span class="bd-label">minutes</span>
+          </div>
+          <div class="bd-item">
+            <span class="bd-val" id="bd-hr">—</span>
+            <span class="bd-label">hours</span>
+          </div>
+          <div class="bd-item">
+            <span class="bd-val" id="bd-day">—</span>
+            <span class="bd-label">days</span>
+          </div>
+        </div>
+
+        <!-- Context Message -->
+        <div class="context-msg" id="context-msg"></div>
+
+        <!-- Action Buttons -->
+        <div class="result-actions" id="result-actions">
+          <button class="action-btn" id="copy-btn" onclick="copyResult()" title="Copy result">
+            📋 Copy
+          </button>
+          <button class="action-btn" id="share-btn" onclick="shareResult()" title="Share via URL">
+            🔗 Share Link
+          </button>
+        </div>
+
+      </section>
+
+      <!-- Speed Comparison Table -->
+      <section class="comparison-section" id="comparison-section">
+        <h2 class="section-title">📊 Connection Speed Comparison</h2>
+        <p class="section-sub">Same file across different connections</p>
+        <div class="comparison-table-wrap">
+          <table class="comparison-table" id="comparison-table" aria-label="Speed comparison">
+            <thead>
+              <tr>
+                <th>Connection</th>
+                <th>Speed</th>
+                <th>Download Time</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-tbody">
+              <tr class="comparison-placeholder">
+                <td colspan="4">Enter file size and speed above to compare connections</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Quick Presets -->
+      <section class="presets" aria-label="Quick presets">
+        <h2 class="section-title">⚡ Quick Presets</h2>
+        <div class="presets-grid" id="presets-grid"></div>
+      </section>
+
+      <!-- History -->
+      <section class="history-section" id="history-section" aria-label="Recent calculations">
+        <div class="history-header">
+          <h2 class="section-title">🕒 Recent Calculations</h2>
+          <button class="clear-btn" id="clear-history-btn" onclick="clearHistory()">Clear</button>
+        </div>
+        <div class="history-list" id="history-list">
+          <div class="history-empty">No calculations yet.</div>
+        </div>
+      </section>
+
+    </section>
+    <!-- /panel-time -->
+
+    <!-- ══════════════════════════════════════
+         PANEL 2 — Find Speed Needed
+    ══════════════════════════════════════ -->
+    <section id="panel-speed" class="tab-panel" role="tabpanel" aria-labelledby="tab-speed" hidden>
+
+      <div class="card">
+        <p class="panel-intro">Given a <strong>file size</strong> and a <strong>desired download time</strong>, find the minimum speed you need.</p>
+        <div class="field-row">
+          <!-- File Size -->
+          <div class="field" id="rev-field-size">
+            <label for="rev-size-value">📁 File Size</label>
+            <div class="input-wrap">
+              <input type="number" id="rev-size-value" placeholder="e.g. 10" min="0" step="any" autocomplete="off" />
+              <select id="rev-size-unit" aria-label="File size unit">
+                <option value="B">B</option>
+                <option value="KB">KB</option>
+                <option value="MB">MB</option>
+                <option value="GB" selected>GB</option>
+                <option value="TB">TB</option>
+              </select>
+            </div>
+            <span class="hint" id="rev-size-hint"></span>
+          </div>
+
+          <!-- Desired Time -->
+          <div class="field" id="rev-field-time">
+            <label for="rev-time-value">⏱ Desired Time</label>
+            <div class="input-wrap">
+              <input type="number" id="rev-time-value" placeholder="e.g. 30" min="0" step="any" autocomplete="off" />
+              <select id="rev-time-unit" aria-label="Time unit">
+                <option value="s">sec</option>
+                <option value="m" selected>min</option>
+                <option value="h">hr</option>
+              </select>
+            </div>
+            <span class="hint" id="rev-time-hint"></span>
+          </div>
+        </div>
+        <button id="rev-calc-btn" onclick="reverseCalculate()">Find Required Speed</button>
+      </div>
+
+      <section class="result-panel" id="rev-result-panel" aria-live="polite">
+        <div class="result-time" id="rev-result-speed" style="font-size:2rem">—</div>
+        <div class="result-sub" id="rev-result-sub"></div>
+        <div class="rev-equiv" id="rev-equiv"></div>
+      </section>
+
+    </section>
+    <!-- /panel-speed -->
+
+    <!-- ══════════════════════════════════════
+         PANEL 3 — Batch File Calculator
+    ══════════════════════════════════════ -->
+    <section id="panel-batch" class="tab-panel" role="tabpanel" aria-labelledby="tab-batch" hidden>
+
+      <div class="card">
+        <p class="panel-intro">Add multiple files to calculate your total download time at once.</p>
+
+        <!-- Speed input for batch -->
+        <div class="field batch-speed-field">
+          <label for="batch-speed-value">📶 Your Download Speed</label>
           <div class="input-wrap">
-            <input type="number" id="speed-value" placeholder="e.g. 100" min="0" step="any" autocomplete="off" />
-            <select id="speed-unit" aria-label="Speed unit">
+            <input type="number" id="batch-speed-value" placeholder="e.g. 100" min="0" step="any" autocomplete="off" />
+            <select id="batch-speed-unit" aria-label="Speed unit">
               <option value="bps">bps</option>
               <option value="Kbps">Kbps</option>
               <option value="Mbps" selected>Mbps</option>
               <option value="Gbps">Gbps</option>
-              <option value="Bps">B/s</option>
-              <option value="KBps">KB/s</option>
               <option value="MBps">MB/s</option>
-              <option value="GBps">GB/s</option>
             </select>
           </div>
-          <span class="hint" id="speed-hint"></span>
+        </div>
+
+        <!-- File list -->
+        <div class="batch-list" id="batch-list"></div>
+
+        <div class="batch-actions">
+          <button class="action-btn add-file-btn" onclick="addBatchFile()">＋ Add File</button>
+          <button id="batch-calc-btn" onclick="calculateBatch()">Calculate Total Time</button>
         </div>
       </div>
 
-      <button id="calc-btn" onclick="calculate()">Calculate</button>
+      <section class="result-panel" id="batch-result-panel" aria-live="polite">
+        <div class="batch-result-grid" id="batch-result-grid"></div>
+        <div class="result-time" id="batch-total-time">—</div>
+        <div class="result-sub" id="batch-total-sub">Total download time for all files</div>
+      </section>
 
     </section>
-
-    <!-- Result -->
-    <section class="result-panel" id="result-panel" aria-live="polite">
-      <div class="result-time" id="result-time">—</div>
-      <div class="result-sub" id="result-sub"></div>
-
-      <div class="breakdown" id="breakdown">
-        <div class="bd-item">
-          <span class="bd-val" id="bd-sec">—</span>
-          <span class="bd-label">seconds</span>
-        </div>
-        <div class="bd-item">
-          <span class="bd-val" id="bd-min">—</span>
-          <span class="bd-label">minutes</span>
-        </div>
-        <div class="bd-item">
-          <span class="bd-val" id="bd-hr">—</span>
-          <span class="bd-label">hours</span>
-        </div>
-        <div class="bd-item">
-          <span class="bd-val" id="bd-day">—</span>
-          <span class="bd-label">days</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Presets -->
-    <section class="presets" aria-label="Quick presets">
-      <h2>Quick presets</h2>
-      <div class="presets-grid" id="presets-grid"></div>
-    </section>
+    <!-- /panel-batch -->
 
   </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
 
   <script src="app.js"></script>
 </body>
